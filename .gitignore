@@ -1,0 +1,4 @@
+node_modules/
+.stickypatch/
+*.log
+.DS_Store

@@ -1,0 +1,7 @@
+{
+  "$schema": "https://raw.githubusercontent.com/tone-leh/stickypatch/main/stickypatch.schema.json",
+  "package": "@anthropic-ai/claude-code",
+  "bin": "claude",
+  "testedVersions": [],
+  "patches": []
+}

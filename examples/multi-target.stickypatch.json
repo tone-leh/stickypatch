@@ -1,0 +1,20 @@
+{
+  "$schema": "https://raw.githubusercontent.com/tone-leh/stickypatch/main/stickypatch.schema.json",
+  "targets": [
+    {
+      "package": "@openai/codex",
+      "bin": "codex",
+      "testedVersions": [],
+      "patches": []
+    },
+    {
+      "package": "@bitkyc08/opencodex",
+      "bin": "ocx",
+      "testedVersions": [],
+      "restart": "ocx service restart",
+      "health": "http://127.0.0.1:10100/readyz",
+      "guard": { "denyEnv": ["CODEX_THREAD_ID", "CODEX_SESSION_ID"] },
+      "patches": []
+    }
+  ]
+}

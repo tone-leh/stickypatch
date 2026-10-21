@@ -1,0 +1,45 @@
+{
+  "name": "stickypatch",
+  "version": "0.1.0",
+  "description": "Local patches for globally installed npm CLIs that survive `npm update -g` — and tell you when upstream fixed them.",
+  "type": "module",
+  "bin": {
+    "stickypatch": "bin/stickypatch.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "stickypatch.schema.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "keywords": [
+    "patch",
+    "patch-package",
+    "npm",
+    "global",
+    "monkey-patch",
+    "cli",
+    "codex",
+    "claude-code",
+    "ai-agents",
+    "upgrade",
+    "rollback"
+  ],
+  "author": "tone-leh",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tone-leh/stickypatch.git"
+  },
+  "homepage": "https://github.com/tone-leh/stickypatch#readme",
+  "bugs": {
+    "url": "https://github.com/tone-leh/stickypatch/issues"
+  }
+}

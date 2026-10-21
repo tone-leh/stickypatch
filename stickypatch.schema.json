@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/tone-leh/stickypatch/main/stickypatch.schema.json",
+  "title": "stickypatch config",
+  "description": "Local patches for installed npm packages that survive updates.",
+  "oneOf": [
+    { "$ref": "#/$defs/target" },
+    {
+      "type": "object",
+      "required": ["targets"],
+      "properties": {
+        "$schema": { "type": "string" },
+        "batchDir": { "type": "string", "description": "Where batch backups live (default ~/.stickypatch/batches)." },
+        "targets": { "type": "array", "items": { "$ref": "#/$defs/target" } }
+      }
+    }
+  ],
+  "$defs": {
+    "text": {
+      "description": "A string, an array of lines (joined with \\n), or { \"file\": \"path relative to the config\" }.",
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } },
+        { "type": "object", "required": ["file"], "properties": { "file": { "type": "string" } }, "additionalProperties": false }
+      ]
+    },
+    "target": {
+      "type": "object",
+      "properties": {
+        "$schema": { "type": "string" },
+        "batchDir": { "type": "string" },
+        "name": { "type": "string", "description": "Label for this target (defaults to the package name)." },
+        "package": { "type": "string", "description": "npm package name, e.g. @openai/codex. Located automatically." },
+        "path": { "type": "string", "description": "Explicit package directory (overrides auto-detection)." },
+        "bin": { "type": "string", "description": "Command name used to find the copy on PATH, if it differs from the package name." },
+        "testedVersions": { "type": "array", "items": { "type": "string" }, "description": "Versions you have verified these patches against. apply refuses others unless --approve / --allow-untested." },
+        "restart": { "type": "string", "description": "Shell command run by --restart after apply/rollback." },
+        "health": {
+          "description": "How --restart decides the service came back. A URL string, a command string, or an object.",
+          "oneOf": [
+            { "type": "string" },
+            {
+              "type": "object",
+              "properties": {
+                "url": { "type": "string" },
+                "command": { "type": "string" },
+                "expectStatus": { "type": "integer" },
+                "timeout": { "type": "number", "description": "Seconds (default 30)." },
+                "delay": { "type": "number", "description": "Seconds to wait before the first probe (default 1)." }
+              }
+            }
+          ]
+        },
+        "busy": { "type": "string", "description": "Shell command that exits 0 when it is safe to restart (e.g. no active sessions)." },
+        "guard": {
+          "type": "object",
+          "properties": {
+            "denyEnv": { "type": "array", "items": { "type": "string" }, "description": "If any of these env vars is set, write commands refuse (read-only context, e.g. an AI agent session)." }
+          }
+        },
+        "patches": { "type": "array", "items": { "$ref": "#/$defs/patch" } }
+      },
+      "anyOf": [{ "required": ["package"] }, { "required": ["path"] }]
+    },
+    "patch": {
+      "type": "object",
+      "required": ["id", "edits"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$" },
+        "title": { "type": "string" },
+        "why": { "type": "string", "description": "What this patch fixes. Shown to reviewers (human or AI) after updates." },
+        "edits": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["file", "find", "replace"],
+            "properties": {
+              "file": { "type": "string", "description": "Path relative to the package root." },
+              "find": { "$ref": "#/$defs/text", "description": "Exact text that must occur exactly once." },
+              "replace": { "$ref": "#/$defs/text" },
+              "marker": { "$ref": "#/$defs/text", "description": "Text whose presence means 'applied' (defaults to replace)." },
+              "previous": { "type": "array", "items": { "$ref": "#/$defs/text" }, "description": "Older forms of replace; apply migrates them." }
+            }
+          }
+        },
+        "upstream": {
+          "description": "Evidence that upstream now ships this fix. All conditions must hold.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["file"],
+            "properties": {
+              "file": { "type": "string" },
+              "contains": { "$ref": "#/$defs/text" },
+              "absent": { "$ref": "#/$defs/text" }
+            }
+          }
+        },
+        "retired": {
+          "description": "Set by `stickypatch retire`. Retired patches are kept as a record but never checked or applied.",
+          "type": "object",
+          "properties": { "version": { "type": ["string", "null"] }, "date": { "type": "string" }, "reason": { "type": "string" } }
+        }
+      }
+    }
+  }
+}

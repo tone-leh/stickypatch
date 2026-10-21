@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="837" height="410" viewBox="0 0 837 410" role="img" aria-label="stickypatch status after an update: one incompatible, one upstream, one missing, one applied patch">
+<style>text{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;font-size:14px;white-space:pre}</style>
+<rect width="837" height="410" rx="10" fill="#0d1117"/>
+<rect width="837" height="34" rx="10" fill="#161b22"/><rect y="24" width="837" height="10" fill="#161b22"/>
+<circle cx="20" cy="17" r="6" fill="#ff5f56"/><circle cx="40" cy="17" r="6" fill="#ffbd2e"/><circle cx="60" cy="17" r="6" fill="#27c93f"/>
+<text x="418.5" y="22" fill="#8b949e" text-anchor="middle" style="font-size:12px">after `npm update -g` — your patches, checked</text>
+<text x="22" y="56" xml:space="preserve"><tspan fill="#3fb950" font-weight="700">$ </tspan><tspan fill="#f0f6fc">npm update -g weather-cli</tspan></text>
+<text x="22" y="77" xml:space="preserve"><tspan fill="#8b949e">changed 1 package in 2s</tspan></text>
+<text x="22" y="119" xml:space="preserve"><tspan fill="#3fb950" font-weight="700">$ </tspan><tspan fill="#f0f6fc">stickypatch status</tspan></text>
+<text x="22" y="140" xml:space="preserve"><tspan fill="#f0f6fc" font-weight="700">weather-cli 1.1.0</tspan><tspan fill="#d29922"> (new — tested: 1.0.0)</tspan></text>
+<text x="22" y="161" xml:space="preserve"><tspan fill="#8b949e">  /usr/local/lib/node_modules/weather-cli  ·  via `weather` on PATH</tspan></text>
+<text x="22" y="203" xml:space="preserve"><tspan fill="#f85149">  ✖ incompatible  </tspan><tspan fill="#c9d1d9">longer-timeout  </tspan><tspan fill="#8b949e">src/fetch.js: anchor not found — upstream changed this code</tspan></text>
+<text x="22" y="224" xml:space="preserve"><tspan fill="#bc8cff">  ★ upstream      </tspan><tspan fill="#c9d1d9">more-retries    </tspan><tspan fill="#8b949e">upstream markers found — the fix appears to be built in</tspan></text>
+<text x="22" y="245" xml:space="preserve"><tspan fill="#d29922">  ● missing       </tspan><tspan fill="#c9d1d9">no-telemetry    </tspan><tspan fill="#8b949e">not applied; anchor intact</tspan></text>
+<text x="22" y="266" xml:space="preserve"><tspan fill="#3fb950">  ✔ applied       </tspan><tspan fill="#c9d1d9">quiet-banner    </tspan><tspan fill="#8b949e">applied (2/2 edits)</tspan></text>
+<text x="22" y="308" xml:space="preserve"><tspan fill="#8b949e">  next:</tspan></text>
+<text x="22" y="329" xml:space="preserve"><tspan fill="#56d4dd">    stickypatch review &gt; review.md        </tspan><tspan fill="#8b949e"># hand this to your AI agent</tspan></text>
+<text x="22" y="350" xml:space="preserve"><tspan fill="#56d4dd">    stickypatch retire more-retries       </tspan><tspan fill="#8b949e"># upstream ships it now</tspan></text>
+<text x="22" y="371" xml:space="preserve"><tspan fill="#56d4dd">    stickypatch apply --approve --partial </tspan><tspan fill="#8b949e"># re-apply the rest, atomically</tspan></text>
+</svg>

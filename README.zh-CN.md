@@ -111,7 +111,7 @@ flowchart LR
 - `find` / `replace` 可以写字符串、按行拆开的数组，或者 `{ "file": "patches/x.txt" }`。
 - 一个配置可以用 `"targets": [ … ]` 管多个包，用 `-t <名字>` 指定其中一个。
 - 需要写逻辑而不是文本替换？用 `stickypatch.config.mjs`，给补丁写 `detect()` / `render()` 函数（[示例](examples/custom-patch.stickypatch.config.mjs)）。
-- 完整格式见 [`stickypatch.schema.json`](stickypatch.schema.json)，模板在 [`examples/`](examples)。
+- 完整格式见 [`stickypatch.schema.json`](stickypatch.schema.json)，配方模板与适用说明见 [`examples/README.md`](examples/README.md)。
 
 ## 命令
 

@@ -1,7 +1,11 @@
 {
   "$schema": "https://raw.githubusercontent.com/tone-leh/stickypatch/main/stickypatch.schema.json",
+  "name": "claude-code",
   "package": "@anthropic-ai/claude-code",
   "bin": "claude",
   "testedVersions": [],
+  "guard": {
+    "denyEnv": ["CLAUDECODE", "CLAUDE_CODE_ENTRYPOINT"]
+  },
   "patches": []
 }

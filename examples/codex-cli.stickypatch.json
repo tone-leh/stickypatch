@@ -1,0 +1,11 @@
+{
+  "$schema": "https://raw.githubusercontent.com/tone-leh/stickypatch/main/stickypatch.schema.json",
+  "name": "codex-cli",
+  "package": "@openai/codex",
+  "bin": "codex",
+  "testedVersions": [],
+  "guard": {
+    "denyEnv": ["CODEX_THREAD_ID", "CODEX_SESSION_ID", "CODEX_SANDBOX"]
+  },
+  "patches": []
+}

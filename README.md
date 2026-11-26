@@ -129,7 +129,7 @@ patch still *means* the same thing, so take a look first.
 - One config can hold several packages with `"targets": [ … ]`. Pick one with `-t <name>`.
 - Need logic instead of text? Use `stickypatch.config.mjs` and give a patch `detect()` /
   `render()` functions ([example](examples/custom-patch.stickypatch.config.mjs)).
-- Full schema: [`stickypatch.schema.json`](stickypatch.schema.json). Templates: [`examples/`](examples).
+- Full schema: [`stickypatch.schema.json`](stickypatch.schema.json). Recipes & templates: [`examples/README.md`](examples/README.md).
 
 ## Commands
 

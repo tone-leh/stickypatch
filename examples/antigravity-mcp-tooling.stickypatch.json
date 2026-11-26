@@ -1,0 +1,70 @@
+{
+  "$schema": "https://raw.githubusercontent.com/tone-leh/stickypatch/main/stickypatch.schema.json",
+  "targets": [
+    {
+      "name": "local-llm-proxy",
+      "package": "@bitkyc08/opencodex",
+      "bin": "ocx",
+      "testedVersions": [],
+      "restart": "ocx service restart",
+      "health": {
+        "url": "http://127.0.0.1:10100/readyz",
+        "expectStatus": 200,
+        "timeout": 60,
+        "delay": 2
+      },
+      "guard": {
+        "denyEnv": [
+          "CODEX_THREAD_ID",
+          "CODEX_SESSION_ID",
+          "CLAUDECODE",
+          "CLAUDE_CODE_ENTRYPOINT",
+          "ANTIGRAVITY_AGENT"
+        ]
+      },
+      "patches": []
+    },
+    {
+      "name": "mcp-filesystem",
+      "package": "@modelcontextprotocol/server-filesystem",
+      "bin": "mcp-server-filesystem",
+      "testedVersions": [],
+      "health": {
+        "command": "mcp-server-filesystem --help",
+        "timeout": 10,
+        "delay": 0
+      },
+      "guard": {
+        "denyEnv": [
+          "CODEX_THREAD_ID",
+          "CODEX_SESSION_ID",
+          "CLAUDECODE",
+          "CLAUDE_CODE_ENTRYPOINT",
+          "ANTIGRAVITY_AGENT"
+        ]
+      },
+      "patches": []
+    },
+    {
+      "name": "mcp-remote",
+      "package": "mcp-remote",
+      "bin": "mcp-remote",
+      "testedVersions": [],
+      "health": {
+        "command": "mcp-remote --version",
+        "timeout": 10,
+        "delay": 0
+      },
+      "guard": {
+        "denyEnv": [
+          "CODEX_THREAD_ID",
+          "CODEX_SESSION_ID",
+          "CLAUDECODE",
+          "CLAUDE_CODE_ENTRYPOINT",
+          "ANTIGRAVITY_AGENT"
+        ]
+      },
+      "patches": []
+    }
+  ]
+}

@@ -1,6 +1,9 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
 import { test } from 'node:test';
-import { normalizePatch } from '../src/config.js';
+import { fileURLToPath } from 'node:url';
+import { loadConfig, normalizePatch } from '../src/config.js';
 import * as P from '../src/patch.js';
 
 const mk = (raw) => normalizePatch(raw, process.cwd());
@@ -142,4 +145,85 @@ test('config validation', () => {
   assert.throws(() => mk({ id: 'x', edits: [] }), /at least one edit/);
   assert.throws(() => mk({ id: 'x', edits: [{ file: FILE, find: 'a', replace: 'a' }] }), /identical/);
   assert.throws(() => mk({ id: 'x', edits: [{ file: FILE, find: '', replace: 'a' }] }), /find/);
+});
+
+test('all examples/*.stickypatch.json templates load cleanly and adhere to schema keys', async () => {
+  const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const examplesDir = path.join(repoRoot, 'examples');
+  const schema = JSON.parse(fs.readFileSync(path.join(repoRoot, 'stickypatch.schema.json'), 'utf8'));
+
+  const multiKeys = new Set(Object.keys(schema.oneOf[1].properties));
+  const targetKeys = new Set(Object.keys(schema.$defs.target.properties));
+  const healthKeys = new Set(Object.keys(schema.$defs.target.properties.health.oneOf[1].properties));
+  const guardKeys = new Set(Object.keys(schema.$defs.target.properties.guard.properties));
+
+  const files = fs
+    .readdirSync(examplesDir)
+    .filter((name) => name.endsWith('.stickypatch.json'))
+    .sort();
+
+  assert.ok(files.length >= 5, `expected at least 5 example configs, found ${files.length}`);
+  for (const expected of [
+    'antigravity-mcp-tooling.stickypatch.json',
+    'claude-code.stickypatch.json',
+    'codex-cli.stickypatch.json',
+    'multi-target.stickypatch.json',
+    'opencodex.stickypatch.json',
+  ]) {
+    assert.ok(files.includes(expected), `missing expected example template: ${expected}`);
+  }
+
+  for (const name of files) {
+    const filePath = path.join(examplesDir, name);
+    const raw = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    const isMulti = Array.isArray(raw.targets);
+
+    const allowedRoot = isMulti ? multiKeys : targetKeys;
+    for (const key of Object.keys(raw)) {
+      assert.ok(allowedRoot.has(key), `${name}: unexpected top-level key "${key}"`);
+    }
+
+    const rawTargets = isMulti ? raw.targets : [raw];
+    assert.ok(rawTargets.length > 0, `${name}: must declare at least one target`);
+    for (const rawTarget of rawTargets) {
+      for (const key of Object.keys(rawTarget)) {
+        assert.ok(targetKeys.has(key), `${name}: unexpected target key "${key}"`);
+      }
+      if (rawTarget.guard !== undefined) {
+        assert.equal(typeof rawTarget.guard, 'object');
+        for (const key of Object.keys(rawTarget.guard)) {
+          assert.ok(guardKeys.has(key), `${name}: unexpected guard key "${key}"`);
+        }
+      }
+      if (rawTarget.health && typeof rawTarget.health === 'object') {
+        for (const key of Object.keys(rawTarget.health)) {
+          assert.ok(healthKeys.has(key), `${name}: unexpected health key "${key}"`);
+        }
+      }
+    }
+
+    const cfg = await loadConfig(filePath);
+    assert.equal(cfg.editable, true, `${name}: JSON config should be editable`);
+    assert.equal(cfg.multi, isMulti, `${name}: multi flag mismatch`);
+    assert.equal(cfg.targets.length, rawTargets.length, `${name}: target count mismatch`);
+    for (const target of cfg.targets) {
+      assert.ok(target.name, `${name}: target must resolve a name`);
+      assert.ok(target.package || target.path, `${name}: target must set package or path`);
+      assert.ok(Array.isArray(target.guard.denyEnv), `${name}: guard.denyEnv must normalize to an array`);
+    }
+  }
+
+  const claudeCfg = await loadConfig(path.join(examplesDir, 'claude-code.stickypatch.json'));
+  assert.deepEqual(claudeCfg.targets[0].guard.denyEnv, ['CLAUDECODE', 'CLAUDE_CODE_ENTRYPOINT']);
+
+  const codexCfg = await loadConfig(path.join(examplesDir, 'codex-cli.stickypatch.json'));
+  assert.equal(codexCfg.targets[0].package, '@openai/codex');
+  assert.equal(codexCfg.targets[0].bin, 'codex');
+  assert.ok(codexCfg.targets[0].guard.denyEnv.includes('CODEX_THREAD_ID'));
+
+  const agyMcpCfg = await loadConfig(path.join(examplesDir, 'antigravity-mcp-tooling.stickypatch.json'));
+  assert.equal(agyMcpCfg.multi, true);
+  assert.ok(agyMcpCfg.targets.length >= 2);
+  assert.ok(agyMcpCfg.targets.some((t) => t.restart && t.health?.url));
+  assert.ok(agyMcpCfg.targets.some((t) => t.health?.command));
 });
